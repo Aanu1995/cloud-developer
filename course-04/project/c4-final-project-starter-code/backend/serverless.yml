@@ -14,6 +14,7 @@ provider:
 
   stage: ${opt:stage, 'dev'}
   region: ${opt:region, 'us-east-1'}
+  profile: ${opt:profile, 'serverless-admin'}
 
   tracing:
     lambda: true
@@ -22,7 +23,7 @@ provider:
   environment:
     TODOS_TABLE: Todos-${self:provider.stage}
     TODOS_CREATED_AT_INDEX: CreatedAtIndex
-    ATTACHMENT_S3_BUCKET: serverless-c4-todo-images-${self:provider.stage}
+    ATTACHMENT_S3_BUCKET: serverless-todo-app-images-${self:provider.stage}
     SIGNED_URL_EXPIRATION: 300
     AUTH0_JWKS_URL: https://dev-5rjlesyo.us.auth0.com/.well-known/jwks.json
 
@@ -206,4 +207,4 @@ resources:
               Principal: '*'
               Action: 's3:GetObject'
               Resource: 'arn:aws:s3:::${self:provider.environment.ATTACHMENT_S3_BUCKET}/*'
-        Bucket: !Ref AttachmentBucket
+        Bucket: !Ref AttachmentsBucket
