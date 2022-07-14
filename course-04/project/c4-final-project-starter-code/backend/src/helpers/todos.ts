@@ -92,17 +92,16 @@ export async function deleteTodo(
   }
 }
 
-export function generateSignedUrl(attachmentId: string): string {
+export async function generateSignedUrl(attachmentId: string): Promise<string> {
   try {
     logger.info('Generating signedURL')
-    const uploadUrl = getUploadUrl(attachmentId)
+    const uploadUrl = await getUploadUrl(attachmentId)
     logger.info('SignedURL generated')
 
     return uploadUrl
   } catch (error) {
-    const errorMsg = 'Error occurred when generating signedURL'
-    logger.error(errorMsg)
-    throw new CustomError(errorMsg, 500)
+    logger.error(error)
+    throw new CustomError(error.message, 500)
   }
 }
 
@@ -110,8 +109,9 @@ export async function updateAttachmentUrl(
   userId: string,
   todoId: string,
   attachmentId: string
-): Promise<string> {
+): Promise<void> {
   try {
+
     const attachmentUrl = getAttachmentUrl(attachmentId)
     await updateAttachmentInTodoItem(userId, todoId, attachmentUrl)
 
@@ -121,7 +121,7 @@ export async function updateAttachmentUrl(
         todoId
       }
     )
-    return attachmentUrl
+    return
   } catch (error) {
     logger.error(error)
     throw new CustomError(error.message, 500)

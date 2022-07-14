@@ -5,9 +5,9 @@ import * as middy from 'middy'
 import * as uuid from 'uuid'
 import { cors, httpErrorHandler } from 'middy/middlewares'
 
-import { failure, getUserId, success } from '../utils'
+import { createsuccess, failure, getUserId } from '../utils'
 import { createLogger } from '../../utils/logger'
-import { updateAttachmentUrl } from '../../helpers/todos'
+import { generateSignedUrl, updateAttachmentUrl } from '../../helpers/todos'
 
 const logger = createLogger('createTodo')
 
@@ -20,8 +20,9 @@ export const handler = middy(
       const todoId = event.pathParameters.todoId
       const attachmentId = uuid.v4()
 
-      const uploadUrl = await updateAttachmentUrl(userId, todoId, attachmentId)
-      return success({ uploadUrl })
+      const uploadUrl = await generateSignedUrl(attachmentId)
+      await updateAttachmentUrl(userId, todoId, attachmentId)
+      return createsuccess({ uploadUrl })
     } catch (error) {
       return failure(error, error.code)
     }
